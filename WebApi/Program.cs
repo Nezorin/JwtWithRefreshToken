@@ -10,6 +10,7 @@ using ServiceLayer;
 using ServiceLayer.Contracts;
 using ServiceLayer.Implementations;
 using System.Text;
+using WebApi.Middleware;
 
 
 var builder = WebApplication.CreateBuilder(args);
@@ -84,6 +85,7 @@ builder.Services.AddSwaggerGen(option =>
         }
     });
 });
+builder.Services.AddTransient<GlobalExceptionHandlerMiddleware>();
 builder.Services.Configure<JWTOptions>(
     builder.Configuration.GetSection("Jwt"));
 builder.Services.AddTransient<ITokenService, TokenService>();
@@ -98,6 +100,8 @@ app.UseRouting();
 
 app.UseAuthentication();
 app.UseAuthorization();
+
+app.UseMiddleware<GlobalExceptionHandlerMiddleware>();
 
 app.MapControllers();
 
